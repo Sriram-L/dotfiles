@@ -129,9 +129,6 @@ alias rest="timer 5m && terminal-notifier -message 'Pomodoro'\
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Setting vi mode
-bindkey -v
-
 #Setting the alias for g++ for cp
 alias g++="/opt/homebrew/bin/g++"
 
