@@ -42,3 +42,4 @@ yabai -m rule --add app="^console$" manage=off
 yabai -m rule --add app="Raycast" sticky=on manage=off
 yabai -m rule --add app="Discord" sticky=on manage=off
 yabai -m rule --add app="stremio" sticky=on manage=off
+yabai -m rule --add app="AppCleaner" sticky=on manage=off
