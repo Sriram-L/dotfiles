@@ -18,21 +18,21 @@ window:
   dynamic_padding: false
   opacity: 0.9
   padding:
-    x: 10
-    y: 5
+    x: 1
+    y: 1
 
 font:
   normal:
-    family: "JetBrainsMono Nerd Font"
+    family: "FiraCode Nerd Font"
     style: Medium
   italic:
-    family: "JetBrainsMono Nerd Font"
+    family: "FiraCode Nerd Font"
     style: Medium Italic
   bold:
-    family: "JetBrainsMono Nerd Font"
+    family: "FiraCode Nerd Font"
     style: Heavy
   bold_italic:
-    family: "JetBrainsMono Nerd Font"
+    family: "FiraCode Nerd Font"
     style: Heavy Italic
   size: 18.0
 
