@@ -29,7 +29,7 @@ yabai -m config left_padding                 15
 # NOTE: for OBS floating head
 # yabai -m config left_padding                 450
 yabai -m config right_padding                15
-yabai -m config window_gap                   15
+yabai -m config window_gap                   5
 
 yabai -m rule --add app="^System Settings$" sticky=on manage=off
 yabai -m rule --add app="Stats" sticky=on manage=off
@@ -43,3 +43,4 @@ yabai -m rule --add app="Raycast" sticky=on manage=off
 yabai -m rule --add app="Discord" sticky=on manage=off
 yabai -m rule --add app="stremio" sticky=on manage=off
 yabai -m rule --add app="AppCleaner" sticky=on manage=off
+yabai -m rule --add app="Preview" sticky=on manage=off

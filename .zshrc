@@ -2,7 +2,7 @@
 #   eval "$(oh-my-posh init zsh)"
 # fi
 
-eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/nordtron.omp.json)"
+eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/robbyrussell.omp.json)"
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
@@ -123,7 +123,7 @@ alias work="timer 25m && terminal-notifier -message 'Pomodoro'\
         -title 'Work Timer is up! Take a Break 😊'\
         -sound Crystal"
         
-alias cp="timer 15m && terminal-notifier -message 'Pomodoro'\
+alias cptimer="timer 15m && terminal-notifier -message 'Pomodoro'\
         -title 'Time up! Look into editorial!'\
         -sound Crystal"
 alias rest="timer 5m && terminal-notifier -message 'Pomodoro'\
@@ -133,8 +133,9 @@ alias rest="timer 5m && terminal-notifier -message 'Pomodoro'\
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 #Setting the alias for g++ for cp
-alias g++="/opt/homebrew/bin/g++"
+alias g++="/opt/homebrew/bin/g++-12"
 
 #Alias to perform git operations on dotfiles
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
