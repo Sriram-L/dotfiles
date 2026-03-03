@@ -2,7 +2,9 @@
 #   eval "$(oh-my-posh init zsh)"
 # fi
 
-eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/robbyrussell.omp.json)"
+export EDITOR="nvim"
+export VISUAL="nvim"
+eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/pure.omp.json)"
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
@@ -110,32 +112,47 @@ export LANG=en_US.UTF-8
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
+#Setting alias for ctags to use homebrew
+alias ctags="/opt/homebrew/bin/ctags"
+#Setting the alias for g++ for cp
+alias g++="/opt/homebrew/bin/g++-12"
+
 # CP Aliases
-export TIMEFMT=$'\nTime\t%mE\nMemory\t%MkB\n'
-co() { g++ -std=c++17 -O2 -o "${1%.*}" $1 -Wall; }
-run() { co $1 && time ./${1%.*} < $2 ; }
 
-alias runner="/Users/sriraml/projects/runner/runner.py"
-alias cltest="rm -rf inp*.txt"
-
-# Mac setup for pomo
-alias work="timer 25m && terminal-notifier -message 'Pomodoro'\
-        -title 'Work Timer is up! Take a Break 😊'\
-        -sound Crystal"
-        
-alias cptimer="timer 15m && terminal-notifier -message 'Pomodoro'\
-        -title 'Time up! Look into editorial!'\
-        -sound Crystal"
-alias rest="timer 5m && terminal-notifier -message 'Pomodoro'\
-        -title 'Break is over! Get back to work 😬'\
-        -sound Crystal"
+alias runner="python3 /Users/sriraml/projects/runner/runner.py"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-#Setting the alias for g++ for cp
-alias g++="/opt/homebrew/bin/g++-12"
 
 #Alias to perform git operations on dotfiles
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+#Cross-compiler path for OSDEV
+
+export PATH="$PATH:~/opt/cross/bin"
+
+alias ccl="/opt/homebrew/bin/x86_64-elf-gcc"
+export PATH="/opt/homebrew/opt/llvm@17/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/llvm@17/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm@17/include"
+
+# Aliases for flutter dev
+
+# Flutter SDK (replace with your exact path)
+export PATH="$PATH:/Users/sriraml/Library/flutter/bin"
+
+# Android SDK
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export ANDROID_SDK_ROOT=$ANDROID_HOME
+export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+export PATH="$ANDROID_HOME/platform-tools:$PATH"
+
+# Java (if using Homebrew OpenJDK)
+export JAVA_HOME=/opt/homebrew/opt/openjdk@17
+export PATH="$JAVA_HOME/bin:$PATH"
+
+
+# opencode
+export PATH=/Users/sriraml/.opencode/bin:$PATH

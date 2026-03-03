@@ -14,7 +14,14 @@ env:
   TERM: xterm-256color
 
 window:
+  startup_mode: Windowed
   decorations: buttonless
+  dimensions:
+    columns: 151
+    lines: 39
+  position:
+    x: 300
+    y: 150
   dynamic_padding: false
   opacity: 0.9
   padding:
@@ -23,18 +30,18 @@ window:
 
 font:
   normal:
-    family: "JetBrainsMono Nerd Font"
+    family: "Iosevka Nerd Font"
     style: Medium
   italic:
-    family: "JetBrainsMono Nerd Font"
+    family: "Iosevka Nerd Font"
     style: Medium Italic
   bold:
-    family: "JetBrainsMono Nerd Font"
+    family: "Iosevka Nerd Font"
     style: Heavy
   bold_italic:
-    family: "JetBrainsMono Nerd Font"
+    family: "Iosevka Nerd Font"
     style: Heavy Italic
-  size: 18.0
+  size: 17.0
 
 # NOTE: helpful hex codes
 # \x1b = escape (useful for vim-related keybindings)
