@@ -3,3 +3,4 @@
 -- Add any additional options here
 
 vim.opt.guifont = "Iosevka Nerd Font:h12"
+vim.opt.termguicolors = true
