@@ -4,3 +4,4 @@
 
 vim.opt.guifont = "Iosevka Nerd Font:h12"
 vim.opt.termguicolors = true
+vim.opt.colorcolumn = "80"

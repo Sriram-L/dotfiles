@@ -16,3 +16,6 @@ CompileFlags:
   - -ferror-limit=1000
 Index:
   Background: Skip
+Diagnostics:
+  Suppress:
+    - "*"

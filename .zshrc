@@ -4,7 +4,7 @@
 
 export EDITOR="nvim"
 export VISUAL="nvim"
-eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/pure.omp.json)"
+# eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/pure.omp.json)"
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
@@ -156,3 +156,12 @@ export PATH="$JAVA_HOME/bin:$PATH"
 
 # opencode
 export PATH=/Users/sriraml/.opencode/bin:$PATH
+
+# Show full absolute path in prompt (run after oh-my-posh)
+PS1='%F{green}%n@%m%f:%F{blue}$(pwd)%f $ '
+
+# Added by Antigravity
+export PATH="/Users/sriraml/.antigravity/antigravity/bin:$PATH"
+
+# Added by Antigravity IDE
+export PATH="/Users/sriraml/.antigravity-ide/antigravity-ide/bin:$PATH"
