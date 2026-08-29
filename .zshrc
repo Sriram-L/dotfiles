@@ -121,6 +121,22 @@ alias g++="/opt/homebrew/bin/g++-12"
 
 alias runner="python3 /Users/sriraml/projects/runner/runner.py"
 
+# Compile a C/C++ file with debug symbols for gdb/lldb debugging
+# usage: dbg <file.c|file.cpp|file.cc> [extra gcc/g++ flags]
+dbg() {
+  local src="$1"
+  if [[ -z "$src" ]]; then
+    echo "usage: dbg <file.c|file.cpp> [extra flags]" >&2
+    return 1
+  fi
+  local out="${src%.*}"
+  shift
+  case "${src##*.}" in
+    c) cc -g -O0 -Wall "$src" -o "$out" "$@" ;;
+    *) g++ -g -O0 -Wall "$src" -o "$out" "$@" ;;
+  esac
+}
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 
@@ -165,3 +181,9 @@ export PATH="/Users/sriraml/.antigravity/antigravity/bin:$PATH"
 
 # Added by Antigravity IDE
 export PATH="/Users/sriraml/.antigravity-ide/antigravity-ide/bin:$PATH"
+
+# Apple LLDB (not pwndbg):
+#   /usr/bin/lldb
+
+# Zsh — add to the END of ~/.zshrc
+eval "$(starship init zsh)"

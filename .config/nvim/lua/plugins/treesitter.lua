@@ -1,9 +1,15 @@
 return {
   "nvim-treesitter/nvim-treesitter",
   opts = {
+    indent = {
+      enable = true,
+      -- Treesitter indent is unreliable for brace-heavy C/C++; use Vim's cindent instead.
+      disable = { "c", "cpp", "objc", "objcpp", "cuda" },
+    },
     ensure_installed = {
       "bash",
       "c",
+      "cpp",
       "diff",
       "html",
       "javascript",

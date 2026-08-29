@@ -8,3 +8,13 @@
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
 vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+
+-- Use Vim's cindent for C/C++ (better brace/newline indentation than treesitter indent).
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("user_c_indent", { clear = true }),
+  pattern = { "c", "cpp", "objc", "objcpp", "cuda" },
+  callback = function()
+    vim.bo.cindent = true
+    vim.bo.indentexpr = ""
+  end,
+})
