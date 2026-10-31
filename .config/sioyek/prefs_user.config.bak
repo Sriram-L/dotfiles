@@ -1,0 +1,8 @@
+custom_background_color 1.0 1.0 1.0
+custom_text_color 0.0 0.0 0.0
+background_color 1.0 1.0 1.0
+custom_color_mode_empty_background_color 1.0 1.0 1.0
+fit_to_page_width_ratio 1.0
+startup_commands toggle_custom_color;toggle_titlebar
+
+ui_font JetBrainsMono Nerd Font
