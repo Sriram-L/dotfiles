@@ -860,17 +860,12 @@ require('lazy').setup({
   },
 
   {
-    'everviolet/nvim',
-    name = 'evergarden',
+    'webhooked/kanso.nvim',
     priority = 1000,
     lazy = false,
     config = function()
-      require('evergarden').setup {
-        theme = {
-          variant = 'winter',
-        },
-      }
-      vim.cmd.colorscheme 'evergarden'
+      require('kanso').setup {}
+      vim.cmd.colorscheme 'kanso'
     end,
   },
 
