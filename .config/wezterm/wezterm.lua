@@ -23,11 +23,11 @@ config.default_prog = { zsh_path, "-l" }
 
 config.color_scheme = "Tokyo Night"
 config.font = wezterm.font_with_fallback({
-	{ family = "Iosevka Nerd Font Mono", weight = "Regular" },
+	{ family = "JuliaMono", weight = "Regular" },
 	{ family = "Apple Symbols" },
 })
 config.font_size = 25.0
-config.window_background_opacity = 0.9
+config.window_background_opacity = 1
 config.window_decorations = "RESIZE"
 config.window_close_confirmation = "AlwaysPrompt"
 config.scrollback_lines = 3000
@@ -133,6 +133,13 @@ wezterm.on("update-status", function(window)
 	window:set_left_status("")
 	window:set_right_status("")
 end)
+
+config.window_padding = {
+	left = 0,
+	right = 0,
+	top = 0,
+	bottom = 0,
+}
 
 --[[ Appearance setting for when I need to take pretty screenshots
 config.enable_tab_bar = false

@@ -864,7 +864,16 @@ require('lazy').setup({
     priority = 1000,
     lazy = false,
     config = function()
-      require('kanso').setup {}
+      require('kanso').setup {
+        theme = 'mist',
+        minimal = true,
+        transparent = true,
+        overrides = function()
+          return {
+            CursorLine = { bg = 'none' },
+          }
+        end,
+      }
       vim.cmd.colorscheme 'kanso'
     end,
   },
