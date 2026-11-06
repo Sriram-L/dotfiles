@@ -1,0 +1,10 @@
+CompileFlags:
+  Compiler: /opt/homebrew/bin/g++-16
+  Add:
+    - -nostdinc++
+    - -isystem
+    - /opt/homebrew/opt/gcc/include/c++/16
+    - -isystem
+    - /opt/homebrew/opt/gcc/include/c++/16/aarch64-apple-darwin27
+    - -isystem
+    - /opt/homebrew/opt/gcc/include/c++/16/backward
