@@ -121,6 +121,73 @@ alias g++="/opt/homebrew/bin/g++-12"
 
 alias runner="python3 /Users/sriraml/projects/runner/runner.py"
 
+# Compile & run a C++ file (USACO Guide: usaco.guide/general/cpp-command)
+# Layout assumed for each solution:
+#   <folder>/main.cpp
+#   <folder>/tests/1.in, <folder>/tests/1.out, <folder>/tests/2.in, ...
+#   co main.cpp          -> compiles to <folder>/tests/main
+#   run main.cpp         -> runs every .in, overwrites each .out, then fzf previews
+#                           (a test exceeding 5s gets "TIMEOUT" written to its .out)
+co() {
+  local src="$1"
+  if [[ -z "$src" ]]; then
+    echo "usage: co <file.cpp>" >&2
+    return 1
+  fi
+  local dir="${src:h}"
+  local tests="$dir/tests"
+  local bin="$tests/${src:t:r}"
+  mkdir -p "$tests"
+  /opt/homebrew/bin/g++-16 -std=c++17 -O2 -o "$bin" "$src" -Wall
+}
+
+run() {
+  local src="$1"
+  if [[ -z "$src" ]]; then
+    echo "usage: run <file.cpp>" >&2
+    return 1
+  fi
+  co "$src" || return 1
+
+  local dir="${src:h}"
+  local tests="$dir/tests"
+  local bin="$tests/${src:t:r}"
+  local f n found=0
+  local to="$(command -v timeout || command -v gtimeout)"
+
+  for f in "$tests"/*.in(N); do
+    found=1
+    n="${${f:t}%.in}"
+    if [[ -n "$to" ]]; then
+      "$to" 5 "$bin" < "$f" > "$tests/$n.out"
+      (( $? == 124 )) && print -r -- TIMEOUT > "$tests/$n.out"
+    else
+      "$bin" < "$f" > "$tests/$n.out"
+    fi
+  done
+
+  if (( ! found )); then
+    "$bin"
+    return
+  fi
+
+  ( cd "$tests" && print -rl -- *.in(N) | fzf --layout=reverse \
+      --prompt='tests> ' --header="$tests" \
+      --preview-window='right,60%,border' \
+      --preview 'f={}; bat --paging=never --color=always --style=header,grid "$f"; bat --paging=never --color=always --style=header,grid "${f%.in}.out"' )
+}
+
+# Create a new solution folder:
+#   init k -> k/k.cpp and k/tests/
+init() {
+  local name="$1"
+  if [[ -z "$name" ]]; then
+    echo "usage: init <name>" >&2
+    return 1
+  fi
+  mkdir -p "$name/tests" && touch "$name/$name.cpp"
+}
+
 # Compile a C/C++ file with debug symbols for gdb/lldb debugging
 # usage: dbg <file.c|file.cpp|file.cc> [extra gcc/g++ flags]
 dbg() {
@@ -182,8 +249,21 @@ export PATH="/Users/sriraml/.antigravity/antigravity/bin:$PATH"
 # Added by Antigravity IDE
 export PATH="/Users/sriraml/.antigravity-ide/antigravity-ide/bin:$PATH"
 
+# Added for go based applications
+export PATH=$PATH:$(go env GOPATH)/bin
 # Apple LLDB (not pwndbg):
 #   /usr/bin/lldb
 
 # Zsh — add to the END of ~/.zshrc
 eval "$(starship init zsh)"
+
+# >>> fastgen / fgstress >>>
+# fgstress is installed per-user:
+#   python3 -m pip install --user -e ~/projects/fastgen
+# Its console script lands in ~/Library/Python/<ver>/bin, which macOS does not
+# put on PATH. Add whichever version directories actually exist, lazily.
+for _fg_bin in $HOME/Library/Python/*/bin(N); do
+  [[ ":$PATH:" == *":$_fg_bin:"* ]] || export PATH="$_fg_bin:$PATH"
+done
+unset _fg_bin
+# <<< fastgen / fgstress <<<
