@@ -126,8 +126,9 @@ alias runner="python3 /Users/sriraml/projects/runner/runner.py"
 #   <folder>/main.cpp
 #   <folder>/tests/1.in, <folder>/tests/1.out, <folder>/tests/2.in, ...
 #   co main.cpp          -> compiles to <folder>/tests/main
-#   run main.cpp         -> runs every .in, overwrites each .out, then fzf previews
-#                           (a test exceeding 5s gets "TIMEOUT" written to its .out)
+#   run main.cpp         -> runs each .in, overwrites each .out, then fzf previews
+#                           (a test exceeding 5s gets "TIMEOUT" written to its .out
+#                            and testing stops there; later tests are not run)
 co() {
   local src="$1"
   if [[ -z "$src" ]]; then
@@ -160,7 +161,10 @@ run() {
     n="${${f:t}%.in}"
     if [[ -n "$to" ]]; then
       "$to" 5 "$bin" < "$f" > "$tests/$n.out"
-      (( $? == 124 )) && print -r -- TIMEOUT > "$tests/$n.out"
+      if (( $? == 124 )); then
+        print -r -- TIMEOUT > "$tests/$n.out"
+        break
+      fi
     else
       "$bin" < "$f" > "$tests/$n.out"
     fi
