@@ -126,9 +126,11 @@ alias runner="python3 /Users/sriraml/projects/runner/runner.py"
 #   <folder>/main.cpp
 #   <folder>/tests/1.in, <folder>/tests/1.out, <folder>/tests/2.in, ...
 #   co main.cpp          -> compiles to <folder>/tests/main
-#   run main.cpp         -> runs each .in, overwrites each .out, then fzf previews
-#                           (a test exceeding 5s gets "TIMEOUT" written to its .out
-#                            and testing stops there; later tests are not run)
+#   run main.cpp         -> runs each .in in parallel, overwrites each .out, then
+#                           fzf previews. A test exceeding 5s gets "TIMEOUT" written
+#                           to its .out and no further tests are scheduled.
+#                           Concurrency defaults to the CPU count; override with
+#                           RUN_JOBS=N run main.cpp
 co() {
   local src="$1"
   if [[ -z "$src" ]]; then
@@ -142,6 +144,21 @@ co() {
   /opt/homebrew/bin/g++-16 -std=c++17 -O2 -o "$bin" "$src" -Wall
 }
 
+# Run one test case (used by run's parallel worker pool).
+_run_case() {
+  local f="$1" n="$2" to="$3" bin="$4" tests="$5" stop="$6"
+  [[ -e "$stop" ]] && return
+  if [[ -n "$to" ]]; then
+    "$to" 5 "$bin" < "$f" > "$tests/$n.out"
+    if (( $? == 124 )); then
+      print -r -- TIMEOUT > "$tests/$n.out"
+      : > "$stop"
+    fi
+  else
+    "$bin" < "$f" > "$tests/$n.out"
+  fi
+}
+
 run() {
   local src="$1"
   if [[ -z "$src" ]]; then
@@ -153,27 +170,41 @@ run() {
   local dir="${src:h}"
   local tests="$dir/tests"
   local bin="$tests/${src:t:r}"
-  local f n found=0
+  local f n p
   local to="$(command -v timeout || command -v gtimeout)"
 
-  for f in "$tests"/*.in(N); do
-    found=1
-    n="${${f:t}%.in}"
-    if [[ -n "$to" ]]; then
-      "$to" 5 "$bin" < "$f" > "$tests/$n.out"
-      if (( $? == 124 )); then
-        print -r -- TIMEOUT > "$tests/$n.out"
-        break
-      fi
-    else
-      "$bin" < "$f" > "$tests/$n.out"
-    fi
-  done
-
-  if (( ! found )); then
+  local -a ins
+  ins=("$tests"/*.in(N))
+  if (( ${#ins} == 0 )); then
     "$bin"
     return
   fi
+
+  local stop="$tests/.stop.$$"
+  rm -f "$stop"
+  local maxjobs="${RUN_JOBS:-$(sysctl -n hw.ncpu 2>/dev/null || echo 4)}"
+  (( maxjobs < 1 )) && maxjobs=1
+
+  local -a pids
+  for f in "${ins[@]}"; do
+    [[ -e "$stop" ]] && break
+
+    while (( ${#pids} >= maxjobs )); do
+      wait "${pids[1]}" 2>/dev/null
+      shift pids
+      [[ -e "$stop" ]] && break
+    done
+    [[ -e "$stop" ]] && break
+
+    n="${${f:t}%.in}"
+    _run_case "$f" "$n" "$to" "$bin" "$tests" "$stop" &
+    pids+=($!)
+  done
+
+  for p in "${pids[@]}"; do
+    wait "$p" 2>/dev/null
+  done
+  rm -f "$stop"
 
   ( cd "$tests" && print -rl -- *.in(N) | fzf --layout=reverse \
       --prompt='tests> ' --header="$tests" \
