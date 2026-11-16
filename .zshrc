@@ -126,11 +126,11 @@ alias runner="python3 /Users/sriraml/projects/runner/runner.py"
 #   <folder>/main.cpp
 #   <folder>/tests/1.in, <folder>/tests/1.out, <folder>/tests/2.in, ...
 #   co main.cpp          -> compiles to <folder>/tests/main
-#   run main.cpp         -> runs each .in in parallel, writing stdout to <n>.out and
-#                           stderr to <n>.err, then fzf previews .in/.out/.err.
-#                           A test exceeding 5s gets "TIMEOUT" written to its .out
-#                           and no further tests are scheduled. Concurrency defaults
-#                           to the CPU count; override with RUN_JOBS=N run main.cpp
+#   run main.cpp         -> runs each .in in parallel, overwrites each .out, then
+#                           fzf previews. A test exceeding 5s gets "TIMEOUT" written
+#                           to its .out and no further tests are scheduled.
+#                           Concurrency defaults to the CPU count; override with
+#                           RUN_JOBS=N run main.cpp
 co() {
   local src="$1"
   if [[ -z "$src" ]]; then
@@ -149,13 +149,13 @@ _run_case() {
   local f="$1" n="$2" to="$3" bin="$4" tests="$5" stop="$6"
   [[ -e "$stop" ]] && return
   if [[ -n "$to" ]]; then
-    "$to" 5 "$bin" < "$f" > "$tests/$n.out" 2> "$tests/$n.err"
+    "$to" 5 "$bin" < "$f" > "$tests/$n.out"
     if (( $? == 124 )); then
       print -r -- TIMEOUT > "$tests/$n.out"
       : > "$stop"
     fi
   else
-    "$bin" < "$f" > "$tests/$n.out" 2> "$tests/$n.err"
+    "$bin" < "$f" > "$tests/$n.out"
   fi
 }
 
@@ -208,23 +208,8 @@ run() {
 
   ( cd "$tests" && print -rl -- *.in(N) | fzf --layout=reverse \
       --prompt='tests> ' --header="$tests" \
-      --preview-window='right,75%,border' \
-      --preview 'f={}; o="${f%.in}.out"; e="${f%.in}.err";
-        rows=${FZF_PREVIEW_LINES:-24};
-        sec=$(( rows / 3 - 1 )); [ "$sec" -lt 1 ] && sec=1;
-        show() {
-          printf "\033[2m── %s ──\033[0m\n" "${1##*/}";
-          n=0;
-          if [ -s "$1" ]; then
-            body=$(bat --paging=never --color=always --style=plain "$1");
-            printf "%s\n" "$body";
-            n=$(printf "%s\n" "$body" | wc -l);
-          fi;
-          while [ "$n" -lt "$sec" ]; do printf "\n"; n=$((n+1)); done;
-        };
-        show "$f";
-        show "$o";
-        if [ -s "$e" ]; then show "$e"; else printf "\033[2m── %s (no stderr) ──\033[0m\n" "${e##*/}"; fi' )
+      --preview-window='right,60%,border' \
+      --preview 'f={}; bat --paging=never --color=always --style=header,grid "$f"; bat --paging=never --color=always --style=header,grid "${f%.in}.out"' )
 }
 
 # Create a new solution folder:
@@ -254,6 +239,7 @@ dbg() {
   esac
 }
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 
 #Alias to perform git operations on dotfiles
