@@ -149,13 +149,13 @@ _run_case() {
   local f="$1" n="$2" to="$3" bin="$4" tests="$5" stop="$6"
   [[ -e "$stop" ]] && return
   if [[ -n "$to" ]]; then
-    "$to" 5 "$bin" < "$f" > "$tests/$n.out"
+    "$to" 5 "$bin" < "$f" > "$tests/$n.out" 2> "$tests/$n.err"
     if (( $? == 124 )); then
       print -r -- TIMEOUT > "$tests/$n.out"
       : > "$stop"
     fi
   else
-    "$bin" < "$f" > "$tests/$n.out"
+    "$bin" < "$f" > "$tests/$n.out" 2> "$tests/$n.err"
   fi
 }
 
@@ -206,10 +206,19 @@ run() {
   done
   rm -f "$stop"
 
-  ( cd "$tests" && print -rl -- *.in(N) | fzf --layout=reverse \
-      --prompt='tests> ' --header="$tests" \
-      --preview-window='right,60%,border' \
-      --preview 'f={}; bat --paging=never --color=always --style=header,grid "$f"; bat --paging=never --color=always --style=header,grid "${f%.in}.out"' )
+  ( cd "$tests" && {
+      local -a files f
+      for f in *.in(N); do
+        [[ -s "$f" ]] || continue
+        files+=("$f" "${f%.in}.out")
+        [[ -e "${f%.in}.err" ]] && files+=("${f%.in}.err")
+      done
+      (( ${#files} )) || return 0
+      print -rl -- "${files[@]}" | fzf --layout=reverse \
+        --prompt='tests> ' --header="$tests" \
+        --preview-window='right,60%,border' \
+        --preview 'cat {}'
+    } )
 }
 
 # Create a new solution folder:
@@ -302,3 +311,16 @@ for _fg_bin in $HOME/Library/Python/*/bin(N); do
 done
 unset _fg_bin
 # <<< fastgen / fgstress <<<
+
+# Clean a competitive-programming problem folder: clean <problem>
+clean() {
+  if [[ -z "$1" ]]; then
+    echo "usage: clean <problem>" >&2
+    return 1
+  fi
+  if [[ ! -d "$1" ]]; then
+    echo "clean: no such directory: $1" >&2
+    return 1
+  fi
+  rm -rf -- "$1"
+}
