@@ -207,17 +207,16 @@ run() {
   rm -f "$stop"
 
   ( cd "$tests" && {
-      local -a files f
+      local -a cases f
       for f in *.in(N); do
         [[ -s "$f" ]] || continue
-        files+=("$f" "${f%.in}.out")
-        [[ -e "${f%.in}.err" ]] && files+=("${f%.in}.err")
+        cases+=("${f%.in}")
       done
-      (( ${#files} )) || return 0
-      print -rl -- "${files[@]}" | fzf --layout=reverse \
+      (( ${#cases} )) || return 0
+      print -rl -- "${cases[@]}" | fzf --layout=reverse \
         --prompt='tests> ' --header="$tests" \
         --preview-window='right,60%,border' \
-        --preview 'cat {}'
+        --preview 'n={}; for x in in out err; do f="$n.$x"; [[ -e "$f" ]] || continue; case "$x" in in) l="input"; c="1;36";; out) l="output"; c="1;32";; err) l="debugs"; c="1;35";; esac; printf "\033[%sm%s\033[0m\n\n" "$c" "$l"; cat "$f"; echo; done'
     } )
 }
 
