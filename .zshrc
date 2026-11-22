@@ -216,7 +216,7 @@ run() {
       print -rl -- "${cases[@]}" | fzf --layout=reverse \
         --prompt='tests> ' --header="$tests" \
         --preview-window='right,60%,border' \
-        --preview 'n={}; for x in in out err; do f="$n.$x"; [[ -e "$f" ]] || continue; case "$x" in in) l="input"; c="1;36";; out) l="output"; c="1;32";; err) l="debugs"; c="1;35";; esac; printf "\033[%sm%s\033[0m\n\n" "$c" "$l"; cat "$f"; echo; done'
+        --preview 'n={}; for x in in out err; do f="$n.$x"; [[ -e "$f" ]] || continue; case "$x" in in) l="INPUT";; out) l="OUTPUT";; err) l="LOGS";; esac; printf "\033[1;36m%s\033[0m\n\n" "$l"; cat "$f"; echo; done'
     } )
 }
 
